@@ -38,29 +38,25 @@ class CryptoCurrenciesListApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const MyHomePage(title: 'Crypto Currencies List'),
+      routes: {
+        // '/' : (context) => CryptoListScreen(),
+        '/coin': (context) => CryptoCoinScreen(),
+      },
+      home: const CryptoListScreen(title: 'Crypto Currencies List'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class CryptoListScreen extends StatefulWidget {
+  const CryptoListScreen({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<CryptoListScreen> createState() => _CryptoListScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
+class _CryptoListScreenState extends State<CryptoListScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -69,30 +65,63 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text('Crypto Currencies List'),
       ),
       body: ListView.separated(
-        itemCount: 10,
-        separatorBuilder: (context, index) => const Divider(),
-        itemBuilder: (context, i) => ListTile(
-          leading: SvgPicture.asset(
-            'assets/svg/bitcoin_logo.svg',
-            height: 30,
-            width: 30,
-          ),
-          title: Text(
-            'Bitcoin',
-            style: theme.textTheme.bodyMedium,
-          ),
-          subtitle: Text(
-            '20000\$',
-            style: theme.textTheme.labelSmall,
-          ),
-          trailing: const Icon(Icons.arrow_forward_ios),
-        ),
+          itemCount: 10,
+          separatorBuilder: (context, index) => const Divider(),
+          itemBuilder: (context, i) {
+            const coinName = 'BItcoin';
+            return ListTile(
+              leading: SvgPicture.asset(
+                'assets/svg/bitcoin_logo.svg',
+                height: 30,
+                width: 30,
+              ),
+              title: Text(
+                coinName,
+                style: theme.textTheme.bodyMedium,
+              ),
+              subtitle: Text(
+                '20000\$',
+                style: theme.textTheme.labelSmall,
+              ),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.of(context).pushNamed(
+                  '/coin',
+                  arguments: coinName,
+                );
+              },
+            );
+          }),
+    );
+  }
+}
+
+class CryptoCoinScreen extends StatefulWidget {
+  const CryptoCoinScreen({super.key});
+
+  @override
+  State<CryptoCoinScreen> createState() => _CryptoCoinScreenState();
+}
+
+class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
+  String? coinName;
+
+  @override
+  void didChangeDependencies() {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    assert(args != null && args is String, 'You must provide String args');
+
+    coinName = args as String;
+    setState(() {});
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(coinName ?? '...'),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ),
     );
   }
 }
